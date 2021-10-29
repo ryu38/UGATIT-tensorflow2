@@ -38,7 +38,7 @@ class Generator(Model):
 
         self.reduce_sum = kl.Lambda(lambda x: tf.reduce_sum(x, axis=-1, keepdims=True))
 
-        self.fcgb = FCGammaBeta(channel, light=self.light)
+        self.fcgb = FCGammaBeta(channel)
 
         arbs = []
         for i in range(n_res):
@@ -77,6 +77,9 @@ class Generator(Model):
         x = self.relu(x)
 
         heatmap = self.reduce_sum(x)
+
+        if self.light:
+            x = tf.reduce_mean(x, [1, 2])
 
         gamma, beta = self.fcgb(kl.Flatten()(x))
 

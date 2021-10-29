@@ -243,10 +243,8 @@ class ResNetAdaLIN(Model):
 
 
 class FCGammaBeta(Model):
-    def __init__(self, channel, use_bias=True, light=False):
+    def __init__(self, channel, use_bias=True):
         super().__init__()
-        self.light = light
-        
         self.fc = [
             kl.Dense(channel, use_bias=use_bias),
             kl.ReLU(),
@@ -257,9 +255,6 @@ class FCGammaBeta(Model):
         self.beta = kl.Dense(channel, use_bias=use_bias)
 
     def call(self, x):
-        if self.light:
-            x = tf.reduce_mean(x, [1, 2])
-
         for f in self.fc:
             x = f(x)
         return self.gamma(x), self.beta(x)
