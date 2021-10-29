@@ -79,9 +79,11 @@ class Generator(Model):
         heatmap = self.reduce_sum(x)
 
         if self.light:
-            x = tf.reduce_mean(x, [1, 2])
+            x_fcgb = tf.reduce_mean(x, [1, 2])
+        else:
+            x_fcgb = x
 
-        gamma, beta = self.fcgb(kl.Flatten()(x))
+        gamma, beta = self.fcgb(kl.Flatten()(x_fcgb))
 
         for f in self.arbs:
             x = f([x, gamma, beta])
